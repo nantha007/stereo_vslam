@@ -1,0 +1,43 @@
+# dataset
+dataset:
+  dataset_path: /home/nk/workspace/robotics/slam/dataset/kitti/dataset/sequences/05
+
+feature_extractor:
+  num_features: 2000
+
+tracking:
+  # Below this many inliers the pose estimate is rejected and the
+  # motion-model pose is kept.
+  min_pose_inliers: 20
+  keyframe:
+    # Insert a keyframe when heading has changed this many degrees
+    # since the previous keyframe.
+    max_rotation_deg: 30.0
+    # Insert a keyframe when tracking inliers drop below this.
+    min_inliers: 150
+
+  # Unlink a landmark from the current frame when it is farther than this
+  # from the camera. enabled: true turns the filter on.
+  far_landmark_filter:
+    enabled: true
+    max_distance_m: 60.0
+
+local_mapper:
+  # Keyframes kept in the local BA window
+  max_active_keyframes: 5
+
+loop_closure:
+  vocabulary_path: /home/nk/workspace/libraries/fbow/vocabularies/orb_mur.fbow
+  # Skip this many recent keyframes as loop candidates.
+  exclude_recent_keyframes: 10
+  # Wait this many keyframes after an accepted loop before searching again.
+  cooldown_keyframes: 2
+  search_radius_m: 30.0
+  min_bow_score: 0.01
+  # Only this many highest-scoring candidates are sent to PnP RANSAC.
+  max_bow_candidates: 10
+  min_pnp_inliers: 10
+
+# enabled: false runs without a Pangolin window.
+viewer:
+  enabled: true
