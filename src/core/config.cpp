@@ -65,6 +65,32 @@ struct convert<stereo_vslam::FeatureExtractorConfig> {
             return false;
         }
         rhs.num_features = scalar.as<int>();
+        rhs.type = stereo_vslam::FeatureType::Orb;
+        if (node["type"]) {
+            if (!stereo_vslam::config_detail::tryGetScalar(node, "type",
+                                                            &scalar)) {
+                return false;
+            }
+            const std::string type = scalar.as<std::string>();
+            if (type == "orb") {
+                rhs.type = stereo_vslam::FeatureType::Orb;
+            } else if (type == "superpoint") {
+                rhs.type = stereo_vslam::FeatureType::SuperPoint;
+            } else {
+                return false;
+            }
+        }
+        if (rhs.type != stereo_vslam::FeatureType::SuperPoint) {
+            return true;
+        }
+        if (!stereo_vslam::config_detail::tryGetScalar(node, "superpoint_model",
+                                                        &scalar) ||
+            !stereo_vslam::config_detail::tryGetScalar(node, "lightglue_model",
+                                                        &scalar)) {
+            return false;
+        }
+        rhs.superpoint_model = node["superpoint_model"].as<std::string>();
+        rhs.lightglue_model = node["lightglue_model"].as<std::string>();
         return true;
     }
 };

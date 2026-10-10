@@ -3,7 +3,15 @@ dataset:
   dataset_path: /home/nk/workspace/robotics/slam/dataset/kitti/dataset/sequences/05
 
 feature_extractor:
+  # orb: ORB detection and Hamming kNN loop matching.
+  # superpoint: SuperPoint detection and LightGlue loop matching.
+  # superpoint also needs loop_closure.vocabulary_path set to
+  # example/superpoint.fbow. The .onnx.data files stay beside the models.
+  type: superpoint
+  # type: orb
   num_features: 2000
+  superpoint_model: weights/superpoint.onnx
+  lightglue_model: weights/superpoint_lightglue.onnx
 
 tracking:
   # Below this many inliers the pose estimate is rejected and the
@@ -27,16 +35,17 @@ local_mapper:
   max_active_keyframes: 5
 
 loop_closure:
-  vocabulary_path: /home/nk/workspace/libraries/fbow/vocabularies/orb_mur.fbow
+  # vocabulary_path: /home/nk/workspace/robotics/slam/vslam/stereo_vslam/vocabularies/orb_mur.fbow
+  vocabulary_path: /home/nk/workspace/robotics/slam/vslam/stereo_vslam/vocabularies/superpoint.fbow
   # Skip this many recent keyframes as loop candidates.
   exclude_recent_keyframes: 10
   # Wait this many keyframes after an accepted loop before searching again.
-  cooldown_keyframes: 2
+  cooldown_keyframes: 5
   search_radius_m: 30.0
-  min_bow_score: 0.01
+  min_bow_score: 0.1
   # Only this many highest-scoring candidates are sent to PnP RANSAC.
   max_bow_candidates: 10
-  min_pnp_inliers: 10
+  min_pnp_inliers: 30
 
 # enabled: false runs without a Pangolin window.
 viewer:

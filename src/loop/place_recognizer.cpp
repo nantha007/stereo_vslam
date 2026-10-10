@@ -8,11 +8,24 @@
 
 namespace stereo_vslam {
 
-PlaceRecognizer::PlaceRecognizer(const std::string &vocabulary_path)
+PlaceRecognizer::PlaceRecognizer(const std::string &vocabulary_path,
+                                 FeatureType type)
     : vocabulary_(std::make_unique<fbow::Vocabulary>()) {
     vocabulary_->readFromFile(vocabulary_path);
     CHECK(vocabulary_->isValid()) << "Failed to load FBoW vocabulary: "
                                   << vocabulary_path;
+    const uint32_t expected = type == FeatureType::SuperPoint
+                                  ? static_cast<uint32_t>(256 * sizeof(float))
+                                  : 32u;
+    const uint32_t actual = vocabulary_->getDescSize();
+    CHECK(actual == expected)
+        << (type == FeatureType::SuperPoint
+                ? "SuperPoint descriptors are 1024 bytes. Point "
+                  "loop_closure.vocabulary_path at example/superpoint.fbow. "
+                  "Loaded vocabulary descriptor size is "
+                : "ORB descriptors are 32 bytes. Loaded vocabulary descriptor "
+                  "size is ")
+        << actual << " bytes.";
     LOG(INFO) << "Loaded FBoW vocabulary from " << vocabulary_path
               << " (descriptor=" << vocabulary_->getDescName() << ")";
 }
@@ -38,8 +51,7 @@ void PlaceRecognizer::computeBoW(Frame &frame) const {
     }
 
     if (rows.empty()) {
-        LOG(WARNING) << "No ORB descriptors for keyframe "
-                     << frame.keyframe_id;
+        LOG(WARNING) << "No descriptors for keyframe " << frame.keyframe_id;
         return;
     }
 
@@ -52,7 +64,7 @@ void PlaceRecognizer::computeBoW(Frame &frame) const {
 
     LOG(INFO) << "Computed FBoW for keyframe " << frame.keyframe_id
               << " with " << frame.bow.size() << " words from "
-              << descriptors.rows << " ORB descriptors";
+              << descriptors.rows << " descriptors";
 }
 
 }  // namespace stereo_vslam

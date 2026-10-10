@@ -12,6 +12,7 @@
 #include "stereo_vslam/core/conversion.h"
 #include "stereo_vslam/core/landmark.h"
 #include "stereo_vslam/core/scoped_log_timer.h"
+#include "stereo_vslam/frontend/light_glue.h"
 
 
 namespace stereo_vslam {
@@ -36,15 +37,39 @@ struct KeyframeCloud {
 using KeyframeKDTree = nanoflann::KDTreeSingleIndexAdaptor<
     nanoflann::L2_Simple_Adaptor<double, KeyframeCloud>, KeyframeCloud, 3>;
 
+Features featuresFromBow(const Frame &frame) {
+    const cv::Mat descriptors = frame.bow_descriptors.isContinuous()
+                                    ? frame.bow_descriptors
+                                    : frame.bow_descriptors.clone();
+    const int count = std::min(descriptors.rows,
+                               static_cast<int>(frame.bow_keypoints.size()));
+    Features features;
+    features.descriptor_dim = descriptors.cols;
+    features.keypoints.reserve(static_cast<size_t>(count));
+    for (int i = 0; i < count; ++i) {
+        features.keypoints.push_back(frame.bow_keypoints[i].pt);
+    }
+    const size_t n =
+        static_cast<size_t>(count) * static_cast<size_t>(descriptors.cols);
+    features.descriptors.resize(n);
+    if (n > 0) {
+        std::copy(descriptors.ptr<float>(), descriptors.ptr<float>() + n,
+                  features.descriptors.begin());
+    }
+    return features;
+}
+
 }  // namespace
 
 LoopClosure::LoopClosure(const LoopClosureConfig &config, Map::Ptr map,
                          Camera::Ptr camera_left,
-                         LoopClosedCallback on_loop_closed)
+                         LoopClosedCallback on_loop_closed,
+                         LightGlue::Ptr light_glue)
     : config_(config),
       map_(std::move(map)),
       camera_left_(std::move(camera_left)),
-      on_loop_closed_(std::move(on_loop_closed)) {}
+      on_loop_closed_(std::move(on_loop_closed)),
+      light_glue_(std::move(light_glue)) {}
 
 void LoopClosure::start() {
     if (loop_thread_.joinable()) return;
@@ -299,37 +324,55 @@ bool LoopClosure::estimateLoopPose(const Frame::Ptr &query,
         return false;
     }
 
-    cv::BFMatcher matcher(cv::NORM_HAMMING);
-    std::vector<std::vector<cv::DMatch>> knn;
-    matcher.knnMatch(query->bow_descriptors, match->bow_descriptors, knn, 2);
-
-    struct KeptMatch {
-        int train_idx = 0;
-        int query_idx = 0;
-    };
-    std::vector<KeptMatch> kept;
-    const double ratio = 0.75;
-    for (auto &m : knn) {
-        if (m.size() < 2) continue;
-        if (m[0].distance > ratio * m[1].distance) continue;
-        const int train_idx = m[0].trainIdx;
-        const int query_idx = m[0].queryIdx;
-        if (train_idx < 0 ||
-            train_idx >= static_cast<int>(match->bow_landmarks.size())) {
-            continue;
-        }
-        kept.push_back(KeptMatch{train_idx, query_idx});
-    }
-
     std::vector<cv::Point3f> obj;
     std::vector<cv::Point2f> img;
-    for (const auto &m : kept) {
-        auto landmark = match->bow_landmarks[m.train_idx].lock();
-        if (!landmark) continue;
-        auto position = state.landmark_positions.find(landmark->id);
-        if (position == state.landmark_positions.end()) continue;
-        obj.push_back(toPoint3f(position->second));
-        img.push_back(query->bow_keypoints[m.query_idx].pt);
+    if (light_glue_) {
+        if (query->bow_descriptors.type() != CV_32F ||
+            match->bow_descriptors.type() != CV_32F) {
+            LOG(WARNING) << "LightGlue expects CV_32F descriptors";
+            return false;
+        }
+        const Features features_query = featuresFromBow(*query);
+        const Features features_match = featuresFromBow(*match);
+        const std::vector<Match> matches = light_glue_->match(
+            features_query, query->image_size, features_match, match->image_size);
+        for (const auto &m : matches) {
+            if (m.index0 < 0 || m.index1 < 0) continue;
+            if (m.index0 >= static_cast<int>(query->bow_keypoints.size()) ||
+                m.index1 >= static_cast<int>(match->bow_landmarks.size())) {
+                continue;
+            }
+            auto landmark = match->bow_landmarks[m.index1].lock();
+            if (!landmark) continue;
+            auto position = state.landmark_positions.find(landmark->id);
+            if (position == state.landmark_positions.end()) continue;
+            obj.push_back(toPoint3f(position->second));
+            img.push_back(query->bow_keypoints[m.index0].pt);
+        }
+    } else {
+        cv::BFMatcher matcher(cv::NORM_HAMMING);
+        std::vector<std::vector<cv::DMatch>> knn;
+        matcher.knnMatch(query->bow_descriptors, match->bow_descriptors, knn, 2);
+
+        const double ratio = 0.75;
+        for (auto &m : knn) {
+            if (m.size() < 2) continue;
+            if (m[0].distance > ratio * m[1].distance) continue;
+            const int train_idx = m[0].trainIdx;
+            const int query_idx = m[0].queryIdx;
+            if (train_idx < 0 ||
+                query_idx < 0 ||
+                train_idx >= static_cast<int>(match->bow_landmarks.size()) ||
+                query_idx >= static_cast<int>(query->bow_keypoints.size())) {
+                continue;
+            }
+            auto landmark = match->bow_landmarks[train_idx].lock();
+            if (!landmark) continue;
+            auto position = state.landmark_positions.find(landmark->id);
+            if (position == state.landmark_positions.end()) continue;
+            obj.push_back(toPoint3f(position->second));
+            img.push_back(query->bow_keypoints[query_idx].pt);
+        }
     }
 
     if (static_cast<int>(obj.size()) < config_.min_pnp_inliers) {

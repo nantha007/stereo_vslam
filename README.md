@@ -49,6 +49,10 @@ Set these in `config/config.yaml`:
 - `loop_closure.vocabulary_path` — the FBoW vocabulary file.
 - `viewer.enabled` — set `false` to run without the Pangolin window.
 
+Add the libcudnn path if needed to the `LD_LIBRARY_PATH` .
+
+- `export LD_LIBRARY_PATH=<LIBCUDNN_PATH>:${LD_LIBRARY_PATH}`
+
 From the repository root:
 
 ```bash
@@ -70,12 +74,19 @@ stereo frame
 Tracking and local BA run on the main thread; loop closure runs in the background.
 
 1. The tracker estimates the current camera pose and inserts a keyframe when tracking weakens or the camera turns.
+  1. There is an option to use ORB with knn/BF Matcher or Superpoint with LightGlue matcher.
 2. Local bundle adjustment refines a short window of recent keyframes after each new keyframe is added.
 3. Loop closure looks for a return to a known place and corrects the trajectory when it finds one.
 
+
+
 ## TODO
 
+- [ ] Add multiple camera mode. 
+
 - [ ] Add test cases.
+
+
 
 ## Reference
 

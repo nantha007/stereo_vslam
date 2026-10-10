@@ -6,6 +6,7 @@
 #include "stereo_vslam/core/scoped_log_timer.h"
 #include "stereo_vslam/frontend/feature_extractor.h"
 #include "stereo_vslam/frontend/keyframe_policy.h"
+#include "stereo_vslam/frontend/light_glue.h"
 #include "stereo_vslam/frontend/stereo_matcher.h"
 #include "stereo_vslam/loop/place_recognizer.h"
 
@@ -20,16 +21,20 @@ VisualSLAM::VisualSLAM(const std::string &config_path) {
 
     map_ = Map::Ptr(new Map);
 
-    auto extractor =
-        std::make_shared<FeatureExtractor>(config.feature_extractor.num_features);
+    auto extractor = std::make_shared<FeatureExtractor>(config.feature_extractor);
+    LightGlue::Ptr light_glue;
+    if (config.feature_extractor.type == FeatureType::SuperPoint) {
+        light_glue =
+            std::make_shared<LightGlue>(config.feature_extractor.lightglue_model);
+    }
     auto stereo = std::make_shared<StereoMatcher>(
         camera_left, camera_right, config.tracking.far_landmark_filter);
     tracker_ = Tracker::Ptr(new Tracker(
         config.tracking, camera_left, extractor, stereo,
         KeyframePolicy(config.tracking.keyframe)));
 
-    place_recognizer_ =
-        std::make_shared<PlaceRecognizer>(config.loop_closure.vocabulary_path);
+    place_recognizer_ = std::make_shared<PlaceRecognizer>(
+        config.loop_closure.vocabulary_path, config.feature_extractor.type);
     local_mapper_ = std::make_shared<LocalMapper>(
         config.local_mapper, map_, camera_left, camera_right);
 
@@ -45,8 +50,8 @@ VisualSLAM::VisualSLAM(const std::string &config_path) {
             }
         };
     }
-    loop_closure_ = LoopClosure::Ptr(
-        new LoopClosure(config.loop_closure, map_, camera_left, on_loop));
+    loop_closure_ = LoopClosure::Ptr(new LoopClosure(
+        config.loop_closure, map_, camera_left, on_loop, light_glue));
     if (viewer_) viewer_->start();
     loop_closure_->start();
 }

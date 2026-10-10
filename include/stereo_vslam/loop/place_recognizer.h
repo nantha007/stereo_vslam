@@ -5,6 +5,7 @@
 
 #include <fbow/fbow.h>
 
+#include "stereo_vslam/core/config.h"
 #include "stereo_vslam/core/frame.h"
 
 namespace stereo_vslam {
@@ -17,8 +18,11 @@ class PlaceRecognizer {
    public:
     using Ptr = std::shared_ptr<PlaceRecognizer>;
 
-    /** @brief Load the FBoW vocabulary at @p vocabulary_path. */
-    explicit PlaceRecognizer(const std::string &vocabulary_path);
+    /**
+     * @brief Load the FBoW vocabulary at @p vocabulary_path.
+     * @param type Descriptor pipeline. The vocabulary byte size must match it.
+     */
+    PlaceRecognizer(const std::string &vocabulary_path, FeatureType type);
 
     /**
      * @brief Fill the bag-of-words fields of @p frame from its left-image
