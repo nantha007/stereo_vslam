@@ -16,6 +16,9 @@ C++23 and CMake 4.2 or newer.
 8. FBoW
 9. nanoflann
 10. Boost
+11. ONNX Runtime
+12. SuperPoint
+13. LightGlue
 
 On Ubuntu, the packaged pieces are typically:
 
@@ -29,6 +32,8 @@ sudo apt install build-essential cmake pkg-config \
 Sophus, g2o (built with the CSparse solver), Pangolin, FBoW, and nanoflann are usually installed from source into `/usr/local`. CMake looks for them with `find_package` (`Sophus`, `G2O`, `Pangolin`, `Glog`, `GFlags`, `CSparse`, `fbow`, `yaml-cpp`). Eigen is included from `/usr/include/eigen3`. g2o is also searched under `G2O_ROOT` and `/opt/ros`.
 
 FBoW needs an ORB vocabulary, for example `orb_mur.fbow` from the [FBoW vocabularies](https://github.com/rmsalinas/fbow/tree/master/vocabularies). Point `loop_closure.vocabulary_path` at that file.
+
+[SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) and [LightGlue](https://github.com/cvg/LightGlue) are the learned detector and matcher. They run through ONNX Runtime: CMake looks for `onnxruntime_cxx_api.h` and `libonnxruntime` under `ONNXRUNTIME_ROOT` (override the default GPU prefix if yours differs). The models are `weights/superpoint.onnx` and `weights/superpoint_lightglue.onnx`; keep each `.onnx.data` file beside its model, and point `feature_extractor.superpoint_model` and `feature_extractor.lightglue_model` at them. SuperPoint loop closure also needs `vocabularies/superpoint.fbow` as `loop_closure.vocabulary_path`.
 
 ## Build
 
