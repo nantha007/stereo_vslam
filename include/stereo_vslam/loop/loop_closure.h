@@ -20,6 +20,8 @@
 
 namespace stereo_vslam {
 
+class LightGlue;
+
 /**
  * LoopClosure
  * Detects loops on a dedicated thread after a new keyframe is inserted
@@ -36,10 +38,12 @@ class LoopClosure {
      * @brief Build loop closure.
      * @param on_loop_closed Called after a correction is published. Empty means
      * no listener.
+     * @param light_glue SuperPoint matcher. Empty keeps Hamming kNN.
      */
     LoopClosure(const LoopClosureConfig &config, Map::Ptr map,
                 Camera::Ptr camera_left,
-                LoopClosedCallback on_loop_closed = {});
+                LoopClosedCallback on_loop_closed = {},
+                std::shared_ptr<LightGlue> light_glue = nullptr);
 
     /** @brief Stop the loop-closure thread. */
     ~LoopClosure();
@@ -100,6 +104,7 @@ class LoopClosure {
     Map::Ptr map_;
     Camera::Ptr camera_left_ = nullptr;
     LoopClosedCallback on_loop_closed_;
+    std::shared_ptr<LightGlue> light_glue_;
 
     std::jthread loop_thread_;
     std::mutex pending_mutex_;

@@ -58,6 +58,7 @@ Frame::Ptr Dataset::nextFrame() {
     auto new_frame = Frame::create();
     new_frame->image_left = image_left;
     new_frame->image_right = image_right;
+    new_frame->image_size = image_left.size();
     current_image_index_++;
     return new_frame;
 }

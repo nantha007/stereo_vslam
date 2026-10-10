@@ -30,6 +30,7 @@ struct Frame {
     Id keyframe_id = 0;  // id of keyframe
     bool is_keyframe = false;  // whether this is a keyframe
     cv::Mat image_left, image_right;  // stereo images
+    cv::Size image_size;  // left image size, kept after the images are released
 
     // extracted features in left image
     std::vector<Feature::Ptr> features_left;
@@ -64,7 +65,7 @@ struct Frame {
      */
     void clear();
 
-    /** @brief Release the images and features. Pose and ids stay. */
+    /** @brief Release the images and features. Pose, ids, and image_size stay. */
     void releaseImagesAndFeatures();
 
     /** @brief Create a frame and assign its id. */

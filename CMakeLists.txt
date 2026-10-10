@@ -8,7 +8,6 @@ set(CMAKE_CXX_FLAGS_RELEASE  "-std=c++23 -O3 -pthread")
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-
 ############### dependencies ######################
 # Eigen
 include_directories("/usr/include/eigen3")
@@ -49,6 +48,22 @@ link_directories(${fbow_LIB_DIR})
 # yaml-cpp
 find_package(yaml-cpp REQUIRED)
 
+# ONNX Runtime (SuperPoint and LightGlue). The published CMake package looks
+# for lib64 and include/onnxruntime, which this GPU build does not use.
+set(ONNXRUNTIME_ROOT
+    "/home/nk/workspace/libraries/onnxruntime-linux-x64-gpu_cuda13-1.28.3"
+    CACHE PATH "ONNX Runtime install prefix")
+find_path(ONNXRUNTIME_INCLUDE_DIR onnxruntime_cxx_api.h
+          HINTS ${ONNXRUNTIME_ROOT}/include)
+find_library(ONNXRUNTIME_LIBRARY onnxruntime
+             HINTS ${ONNXRUNTIME_ROOT}/lib)
+if(NOT ONNXRUNTIME_INCLUDE_DIR OR NOT ONNXRUNTIME_LIBRARY)
+    message(FATAL_ERROR
+        "ONNX Runtime not found. Set ONNXRUNTIME_ROOT to the install prefix.")
+endif()
+include_directories(${ONNXRUNTIME_INCLUDE_DIR})
+get_filename_component(ONNXRUNTIME_LIB_DIR ${ONNXRUNTIME_LIBRARY} DIRECTORY)
+
 set(THIRD_PARTY_LIBS
         ${OpenCV_LIBS}
         ${Sophus_LIBRARIES}
@@ -63,6 +78,7 @@ set(THIRD_PARTY_LIBS
         ${CSPARSE_LIBRARY}
         fbow
         yaml-cpp::yaml-cpp
+        ${ONNXRUNTIME_LIBRARY}
         )
 
 ############### source and test ######################
@@ -73,6 +89,8 @@ set(STEREO_VSLAM_SOURCES
         src/core/map.cpp
         src/core/landmark.cpp
         src/frontend/feature_extractor.cpp
+        src/frontend/superpoint.cpp
+        src/frontend/light_glue.cpp
         src/frontend/stereo_matcher.cpp
         src/frontend/tracker.cpp
         src/backend/local_mapper.cpp
@@ -91,3 +109,4 @@ add_executable(vslam src/main.cpp)
 target_link_libraries(vslam PRIVATE
         stereo_vslam_objects
         -Wl,--no-as-needed ${G2O_SOLVER_CSPARSE_EXTENSION} -Wl,--as-needed)
+set_property(TARGET vslam APPEND PROPERTY BUILD_RPATH "${ONNXRUNTIME_LIB_DIR}")

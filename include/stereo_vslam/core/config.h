@@ -10,9 +10,15 @@ struct DatasetConfig {
     std::string dataset_path;
 };
 
-/// YAML section `feature_extractor` (ORB detector).
+enum class FeatureType { Orb, SuperPoint };
+
+/// YAML section `feature_extractor`. `orb` is ORB plus Hamming kNN.
+/// `superpoint` is SuperPoint plus LightGlue.
 struct FeatureExtractorConfig {
-    int num_features;
+    FeatureType type = FeatureType::Orb;
+    int num_features = 0;
+    std::string superpoint_model;
+    std::string lightglue_model;
 };
 
 struct KeyframeConfig {

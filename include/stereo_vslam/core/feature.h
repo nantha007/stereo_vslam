@@ -21,7 +21,7 @@ struct Feature {
 
     std::weak_ptr<Frame> frame;  // frame that owns this feature
     cv::KeyPoint keypoint;       // 2D extraction keypoint
-    cv::Mat descriptor;          // ORB descriptor (1x32, CV_8U)
+    cv::Mat descriptor;  // ORB 1x32 CV_8U, or SuperPoint 1x256 CV_32F
     bool is_on_left_image = true;  // true if detected on the left image, false for the right
 
     /** @brief Landmark linked to this feature, or empty. */
@@ -47,7 +47,7 @@ struct Feature {
 
     /**
      * @brief Create a feature on @p frame.
-     * @param descriptor ORB descriptor. Empty when not yet computed.
+     * @param descriptor ORB or SuperPoint descriptor. Empty when not yet computed.
      */
     Feature(std::shared_ptr<Frame> frame, const cv::KeyPoint &keypoint,
             const cv::Mat &descriptor = cv::Mat())
