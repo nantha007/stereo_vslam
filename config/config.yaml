@@ -35,8 +35,8 @@ local_mapper:
   max_active_keyframes: 5
 
 loop_closure:
-  # vocabulary_path: /home/nk/workspace/robotics/slam/vslam/stereo_vslam/vocabularies/orb_mur.fbow
-  vocabulary_path: /home/nk/workspace/robotics/slam/vslam/stereo_vslam/vocabularies/superpoint.fbow
+  # vocabulary_path: /home/nk/workspace/robotics/slam/vslam/visual_slam/vocabularies/orb_mur.fbow
+  vocabulary_path: /home/nk/workspace/robotics/slam/vslam/visual_slam/vocabularies/superpoint.fbow
   # Skip this many recent keyframes as loop candidates.
   exclude_recent_keyframes: 10
   # Wait this many keyframes after an accepted loop before searching again.

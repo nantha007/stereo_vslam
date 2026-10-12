@@ -1,7 +1,7 @@
-#include "stereo_vslam/core/landmark.h"
-#include "stereo_vslam/core/feature.h"
+#include "visual_slam/core/landmark.h"
+#include "visual_slam/core/feature.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 Landmark::Ptr Landmark::create() {
     static Id factory_id = 0;
@@ -24,4 +24,4 @@ void Landmark::removeObservation(std::shared_ptr<Feature> feature) {
     if (removed && feature) feature->resetLandmark();
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

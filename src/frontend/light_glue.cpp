@@ -1,12 +1,12 @@
-#include "stereo_vslam/frontend/light_glue.h"
+#include "visual_slam/frontend/light_glue.h"
 
-#include "stereo_vslam/frontend/ort_session.h"
+#include "visual_slam/frontend/ort_session.h"
 
 #include <algorithm>
 #include <array>
 #include <stdexcept>
 
-namespace stereo_vslam {
+namespace visual_slam {
 namespace {
 
 std::vector<float> normalizeKeypoints(const std::vector<cv::Point2f> &keypoints,
@@ -93,4 +93,4 @@ std::vector<Match> LightGlue::match(const Features &features0, const cv::Size &s
     return matches;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

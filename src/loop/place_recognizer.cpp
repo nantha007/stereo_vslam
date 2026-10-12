@@ -1,12 +1,12 @@
-#include "stereo_vslam/loop/place_recognizer.h"
+#include "visual_slam/loop/place_recognizer.h"
 
 #include <glog/logging.h>
 
-#include "stereo_vslam/core/feature.h"
-#include "stereo_vslam/core/landmark.h"
-#include "stereo_vslam/core/scoped_log_timer.h"
+#include "visual_slam/core/feature.h"
+#include "visual_slam/core/landmark.h"
+#include "visual_slam/core/scoped_log_timer.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 PlaceRecognizer::PlaceRecognizer(const std::string &vocabulary_path,
                                  FeatureType type)
@@ -67,4 +67,4 @@ void PlaceRecognizer::computeBoW(Frame &frame) const {
               << descriptors.rows << " descriptors";
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

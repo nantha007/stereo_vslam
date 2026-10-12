@@ -1,15 +1,15 @@
-#include "stereo_vslam/backend/local_mapper.h"
+#include "visual_slam/backend/local_mapper.h"
 
 #include <unordered_map>
 #include <unordered_set>
 
 #include <glog/logging.h>
 
-#include "stereo_vslam/backend/optimizer.h"
-#include "stereo_vslam/core/feature.h"
-#include "stereo_vslam/core/scoped_log_timer.h"
+#include "visual_slam/backend/optimizer.h"
+#include "visual_slam/core/feature.h"
+#include "visual_slam/core/scoped_log_timer.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 namespace {
 
@@ -208,4 +208,4 @@ void LocalMapper::runLocalBA() {
               << result.num_inliers;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

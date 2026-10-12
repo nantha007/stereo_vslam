@@ -1,4 +1,4 @@
-# stereo_vslam
+# visual_slam
 
 Stereo visual SLAM for the [KITTI odometry](https://www.cvlibs.net/datasets/kitti/eval_odometry.php) sequences. Each stereo pair is tracked, selected frames become keyframes, a short window of those keyframes is refined by local bundle adjustment, and a background thread closes loops with a pose graph.
 

@@ -1,16 +1,16 @@
-#include "stereo_vslam/visual_slam.h"
+#include "visual_slam/visual_slam.h"
 
 #include <glog/logging.h>
 
-#include "stereo_vslam/core/config.h"
-#include "stereo_vslam/core/scoped_log_timer.h"
-#include "stereo_vslam/frontend/feature_extractor.h"
-#include "stereo_vslam/frontend/keyframe_policy.h"
-#include "stereo_vslam/frontend/light_glue.h"
-#include "stereo_vslam/frontend/stereo_matcher.h"
-#include "stereo_vslam/loop/place_recognizer.h"
+#include "visual_slam/core/config.h"
+#include "visual_slam/core/scoped_log_timer.h"
+#include "visual_slam/frontend/feature_extractor.h"
+#include "visual_slam/frontend/keyframe_policy.h"
+#include "visual_slam/frontend/light_glue.h"
+#include "visual_slam/frontend/stereo_matcher.h"
+#include "visual_slam/loop/place_recognizer.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 VisualSLAM::VisualSLAM(const std::string &config_path) {
     SlamConfig config(config_path);
@@ -119,4 +119,4 @@ bool VisualSLAM::processFrame() {
     return true;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

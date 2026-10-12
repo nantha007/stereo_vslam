@@ -1,4 +1,4 @@
-#include "stereo_vslam/frontend/feature_extractor.h"
+#include "visual_slam/frontend/feature_extractor.h"
 
 #include <algorithm>
 #include <cmath>
@@ -6,11 +6,11 @@
 #include <glog/logging.h>
 #include <opencv2/imgproc.hpp>
 
-#include "stereo_vslam/core/feature.h"
-#include "stereo_vslam/core/scoped_log_timer.h"
-#include "stereo_vslam/frontend/superpoint.h"
+#include "visual_slam/core/feature.h"
+#include "visual_slam/core/scoped_log_timer.h"
+#include "visual_slam/frontend/superpoint.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 namespace {
 
 cv::Mat featureMask(const Frame &frame) {
@@ -100,4 +100,4 @@ int FeatureExtractor::detectNew(const Frame::Ptr &frame) {
     return num_detected;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

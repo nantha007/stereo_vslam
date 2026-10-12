@@ -1,4 +1,4 @@
-#include "stereo_vslam/frontend/stereo_matcher.h"
+#include "visual_slam/frontend/stereo_matcher.h"
 
 #include <cmath>
 
@@ -6,11 +6,11 @@
 
 #include <opencv2/video/tracking.hpp>
 
-#include "stereo_vslam/core/conversion.h"
-#include "stereo_vslam/core/feature.h"
-#include "stereo_vslam/core/scoped_log_timer.h"
+#include "visual_slam/core/conversion.h"
+#include "visual_slam/core/feature.h"
+#include "visual_slam/core/scoped_log_timer.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 StereoMatcher::StereoMatcher(Camera::Ptr camera_left, Camera::Ptr camera_right,
                              const FarLandmarkFilterConfig &far_landmark_filter)
@@ -101,4 +101,4 @@ std::vector<Landmark::Ptr> StereoMatcher::triangulate(const Frame::Ptr &frame) {
     return new_landmarks;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

@@ -1,5 +1,5 @@
-#include "stereo_vslam/io/dataset.h"
-#include "stereo_vslam/core/frame.h"
+#include "visual_slam/io/dataset.h"
+#include "visual_slam/core/frame.h"
 
 #include <fstream>
 
@@ -7,7 +7,7 @@
 #include <glog/logging.h>
 #include <opencv2/opencv.hpp>
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 Dataset::Dataset(const std::string &dataset_path)
     : dataset_path_(dataset_path) {
@@ -63,4 +63,4 @@ Frame::Ptr Dataset::nextFrame() {
     return new_frame;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

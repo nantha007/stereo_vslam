@@ -1,9 +1,9 @@
-#include "stereo_vslam/core/config.h"
+#include "visual_slam/core/config.h"
 
 #include <glog/logging.h>
 #include <yaml-cpp/yaml.h>
 
-namespace stereo_vslam {
+namespace visual_slam {
 namespace config_detail {
 
 bool tryGetScalar(const YAML::Node &parent, const char *key, YAML::Node *out) {
@@ -33,21 +33,21 @@ bool tryGetMap(const YAML::Node &parent, const char *key, YAML::Node *out) {
 }
 
 }  // namespace config_detail
-}  // namespace stereo_vslam
+}  // namespace visual_slam
 
 namespace YAML {
 
 template <>
-struct convert<stereo_vslam::DatasetConfig> {
-    static Node encode(const stereo_vslam::DatasetConfig &rhs) {
+struct convert<visual_slam::DatasetConfig> {
+    static Node encode(const visual_slam::DatasetConfig &rhs) {
         Node node;
         node["dataset_path"] = rhs.dataset_path;
         return node;
     }
 
-    static bool decode(const Node &node, stereo_vslam::DatasetConfig &rhs) {
+    static bool decode(const Node &node, visual_slam::DatasetConfig &rhs) {
         YAML::Node scalar;
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "dataset_path",
+        if (!visual_slam::config_detail::tryGetScalar(node, "dataset_path",
                                                         &scalar)) {
             return false;
         }
@@ -57,35 +57,35 @@ struct convert<stereo_vslam::DatasetConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::FeatureExtractorConfig> {
-    static bool decode(const Node &node, stereo_vslam::FeatureExtractorConfig &rhs) {
+struct convert<visual_slam::FeatureExtractorConfig> {
+    static bool decode(const Node &node, visual_slam::FeatureExtractorConfig &rhs) {
         YAML::Node scalar;
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "num_features",
+        if (!visual_slam::config_detail::tryGetScalar(node, "num_features",
                                                         &scalar)) {
             return false;
         }
         rhs.num_features = scalar.as<int>();
-        rhs.type = stereo_vslam::FeatureType::Orb;
+        rhs.type = visual_slam::FeatureType::Orb;
         if (node["type"]) {
-            if (!stereo_vslam::config_detail::tryGetScalar(node, "type",
+            if (!visual_slam::config_detail::tryGetScalar(node, "type",
                                                             &scalar)) {
                 return false;
             }
             const std::string type = scalar.as<std::string>();
             if (type == "orb") {
-                rhs.type = stereo_vslam::FeatureType::Orb;
+                rhs.type = visual_slam::FeatureType::Orb;
             } else if (type == "superpoint") {
-                rhs.type = stereo_vslam::FeatureType::SuperPoint;
+                rhs.type = visual_slam::FeatureType::SuperPoint;
             } else {
                 return false;
             }
         }
-        if (rhs.type != stereo_vslam::FeatureType::SuperPoint) {
+        if (rhs.type != visual_slam::FeatureType::SuperPoint) {
             return true;
         }
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "superpoint_model",
+        if (!visual_slam::config_detail::tryGetScalar(node, "superpoint_model",
                                                         &scalar) ||
-            !stereo_vslam::config_detail::tryGetScalar(node, "lightglue_model",
+            !visual_slam::config_detail::tryGetScalar(node, "lightglue_model",
                                                         &scalar)) {
             return false;
         }
@@ -96,15 +96,15 @@ struct convert<stereo_vslam::FeatureExtractorConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::KeyframeConfig> {
-    static bool decode(const Node &node, stereo_vslam::KeyframeConfig &rhs) {
+struct convert<visual_slam::KeyframeConfig> {
+    static bool decode(const Node &node, visual_slam::KeyframeConfig &rhs) {
         YAML::Node scalar;
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "max_rotation_deg",
+        if (!visual_slam::config_detail::tryGetScalar(node, "max_rotation_deg",
                                                         &scalar)) {
             return false;
         }
         rhs.max_rotation_deg = scalar.as<double>();
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "min_inliers",
+        if (!visual_slam::config_detail::tryGetScalar(node, "min_inliers",
                                                         &scalar)) {
             return false;
         }
@@ -114,14 +114,14 @@ struct convert<stereo_vslam::KeyframeConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::FarLandmarkFilterConfig> {
+struct convert<visual_slam::FarLandmarkFilterConfig> {
     static bool decode(const Node &node,
-                       stereo_vslam::FarLandmarkFilterConfig &rhs) {
+                       visual_slam::FarLandmarkFilterConfig &rhs) {
         YAML::Node enabled_node;
         YAML::Node max_distance_m_node;
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "enabled",
+        if (!visual_slam::config_detail::tryGetScalar(node, "enabled",
                                                         &enabled_node) ||
-            !stereo_vslam::config_detail::tryGetScalar(node, "max_distance_m",
+            !visual_slam::config_detail::tryGetScalar(node, "max_distance_m",
                                                         &max_distance_m_node)) {
             return false;
         }
@@ -132,25 +132,25 @@ struct convert<stereo_vslam::FarLandmarkFilterConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::TrackingConfig> {
-    static bool decode(const Node &node, stereo_vslam::TrackingConfig &rhs) {
+struct convert<visual_slam::TrackingConfig> {
+    static bool decode(const Node &node, visual_slam::TrackingConfig &rhs) {
         YAML::Node scalar;
         YAML::Node keyframe_node;
         YAML::Node far_node;
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "min_pose_inliers",
+        if (!visual_slam::config_detail::tryGetScalar(node, "min_pose_inliers",
                                                         &scalar) ||
-            !stereo_vslam::config_detail::tryGetMap(node, "keyframe",
+            !visual_slam::config_detail::tryGetMap(node, "keyframe",
                                                      &keyframe_node) ||
-            !stereo_vslam::config_detail::tryGetMap(node, "far_landmark_filter",
+            !visual_slam::config_detail::tryGetMap(node, "far_landmark_filter",
                                                      &far_node)) {
             return false;
         }
         rhs.min_pose_inliers = node["min_pose_inliers"].as<int>();
-        if (!convert<stereo_vslam::KeyframeConfig>::decode(keyframe_node,
+        if (!convert<visual_slam::KeyframeConfig>::decode(keyframe_node,
                                                            rhs.keyframe)) {
             return false;
         }
-        if (!convert<stereo_vslam::FarLandmarkFilterConfig>::decode(
+        if (!convert<visual_slam::FarLandmarkFilterConfig>::decode(
                 far_node, rhs.far_landmark_filter)) {
             return false;
         }
@@ -159,10 +159,10 @@ struct convert<stereo_vslam::TrackingConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::LocalMapperConfig> {
-    static bool decode(const Node &node, stereo_vslam::LocalMapperConfig &rhs) {
+struct convert<visual_slam::LocalMapperConfig> {
+    static bool decode(const Node &node, visual_slam::LocalMapperConfig &rhs) {
         YAML::Node scalar;
-        if (!stereo_vslam::config_detail::tryGetScalar(
+        if (!visual_slam::config_detail::tryGetScalar(
                 node, "max_active_keyframes", &scalar)) {
             return false;
         }
@@ -172,22 +172,22 @@ struct convert<stereo_vslam::LocalMapperConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::LoopClosureConfig> {
-    static bool decode(const Node &node, stereo_vslam::LoopClosureConfig &rhs) {
+struct convert<visual_slam::LoopClosureConfig> {
+    static bool decode(const Node &node, visual_slam::LoopClosureConfig &rhs) {
         YAML::Node scalar;
-        if (!stereo_vslam::config_detail::tryGetScalar(
+        if (!visual_slam::config_detail::tryGetScalar(
                 node, "exclude_recent_keyframes", &scalar) ||
-            !stereo_vslam::config_detail::tryGetScalar(
+            !visual_slam::config_detail::tryGetScalar(
                 node, "cooldown_keyframes", &scalar) ||
-            !stereo_vslam::config_detail::tryGetScalar(node, "search_radius_m",
+            !visual_slam::config_detail::tryGetScalar(node, "search_radius_m",
                                                         &scalar) ||
-            !stereo_vslam::config_detail::tryGetScalar(node, "min_bow_score",
+            !visual_slam::config_detail::tryGetScalar(node, "min_bow_score",
                                                         &scalar) ||
-            !stereo_vslam::config_detail::tryGetScalar(
+            !visual_slam::config_detail::tryGetScalar(
                 node, "max_bow_candidates", &scalar) ||
-            !stereo_vslam::config_detail::tryGetScalar(node, "min_pnp_inliers",
+            !visual_slam::config_detail::tryGetScalar(node, "min_pnp_inliers",
                                                         &scalar) ||
-            !stereo_vslam::config_detail::tryGetScalar(node, "vocabulary_path",
+            !visual_slam::config_detail::tryGetScalar(node, "vocabulary_path",
                                                         &scalar)) {
             return false;
         }
@@ -203,10 +203,10 @@ struct convert<stereo_vslam::LoopClosureConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::ViewerConfig> {
-    static bool decode(const Node &node, stereo_vslam::ViewerConfig &rhs) {
+struct convert<visual_slam::ViewerConfig> {
+    static bool decode(const Node &node, visual_slam::ViewerConfig &rhs) {
         YAML::Node scalar;
-        if (!stereo_vslam::config_detail::tryGetScalar(node, "enabled",
+        if (!visual_slam::config_detail::tryGetScalar(node, "enabled",
                                                         &scalar)) {
             return false;
         }
@@ -216,50 +216,50 @@ struct convert<stereo_vslam::ViewerConfig> {
 };
 
 template <>
-struct convert<stereo_vslam::SlamConfig> {
-    static bool decode(const Node &node, stereo_vslam::SlamConfig &rhs) {
+struct convert<visual_slam::SlamConfig> {
+    static bool decode(const Node &node, visual_slam::SlamConfig &rhs) {
         YAML::Node dataset_node;
         YAML::Node feature_extractor_node;
         YAML::Node tracking_node;
         YAML::Node local_mapper_node;
         YAML::Node loop_closure_node;
-        if (!stereo_vslam::config_detail::tryGetMap(node, "dataset",
+        if (!visual_slam::config_detail::tryGetMap(node, "dataset",
                                                      &dataset_node) ||
-            !stereo_vslam::config_detail::tryGetMap(node, "feature_extractor",
+            !visual_slam::config_detail::tryGetMap(node, "feature_extractor",
                                                      &feature_extractor_node) ||
-            !stereo_vslam::config_detail::tryGetMap(node, "tracking",
+            !visual_slam::config_detail::tryGetMap(node, "tracking",
                                                      &tracking_node) ||
-            !stereo_vslam::config_detail::tryGetMap(node, "local_mapper",
+            !visual_slam::config_detail::tryGetMap(node, "local_mapper",
                                                      &local_mapper_node) ||
-            !stereo_vslam::config_detail::tryGetMap(node, "loop_closure",
+            !visual_slam::config_detail::tryGetMap(node, "loop_closure",
                                                      &loop_closure_node)) {
             return false;
         }
-        if (!convert<stereo_vslam::DatasetConfig>::decode(dataset_node,
+        if (!convert<visual_slam::DatasetConfig>::decode(dataset_node,
                                                           rhs.dataset)) {
             return false;
         }
-        if (!convert<stereo_vslam::FeatureExtractorConfig>::decode(
+        if (!convert<visual_slam::FeatureExtractorConfig>::decode(
                 feature_extractor_node, rhs.feature_extractor)) {
             return false;
         }
-        if (!convert<stereo_vslam::TrackingConfig>::decode(tracking_node,
+        if (!convert<visual_slam::TrackingConfig>::decode(tracking_node,
                                                           rhs.tracking)) {
             return false;
         }
-        if (!convert<stereo_vslam::LocalMapperConfig>::decode(
+        if (!convert<visual_slam::LocalMapperConfig>::decode(
                 local_mapper_node, rhs.local_mapper)) {
             return false;
         }
-        if (!convert<stereo_vslam::LoopClosureConfig>::decode(
+        if (!convert<visual_slam::LoopClosureConfig>::decode(
                 loop_closure_node, rhs.loop_closure)) {
             return false;
         }
         if (node["viewer"]) {
             YAML::Node viewer_node;
-            if (!stereo_vslam::config_detail::tryGetMap(node, "viewer",
+            if (!visual_slam::config_detail::tryGetMap(node, "viewer",
                                                          &viewer_node) ||
-                !convert<stereo_vslam::ViewerConfig>::decode(viewer_node,
+                !convert<visual_slam::ViewerConfig>::decode(viewer_node,
                                                              rhs.viewer)) {
                 return false;
             }
@@ -270,7 +270,7 @@ struct convert<stereo_vslam::SlamConfig> {
 
 }  // namespace YAML
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 SlamConfig::SlamConfig(const std::string &filename) {
     try {
@@ -285,4 +285,4 @@ SlamConfig::SlamConfig(const std::string &filename) {
     }
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

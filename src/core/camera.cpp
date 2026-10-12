@@ -1,6 +1,6 @@
-#include "stereo_vslam/core/camera.h"
+#include "visual_slam/core/camera.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 Vec3 Camera::worldToCamera(const Vec3 &p_w, const SE3 &T_cw) {
     return extrinsic_ * T_cw * p_w;
@@ -17,4 +17,4 @@ Vec2 Camera::worldToPixel(const Vec3 &p_w, const SE3 &T_cw) {
     return cameraToPixel(worldToCamera(p_w, T_cw));
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

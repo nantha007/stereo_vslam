@@ -1,4 +1,4 @@
-#include "stereo_vslam/backend/optimizer.h"
+#include "visual_slam/backend/optimizer.h"
 
 #include <cmath>
 #include <map>
@@ -6,11 +6,11 @@
 
 #include <glog/logging.h>
 
-#include "stereo_vslam/backend/g2o_types.h"
-#include "stereo_vslam/core/conversion.h"
-#include "stereo_vslam/core/landmark.h"
+#include "visual_slam/backend/g2o_types.h"
+#include "visual_slam/core/conversion.h"
+#include "visual_slam/core/landmark.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 namespace optimizer {
 
 namespace {
@@ -339,4 +339,4 @@ PoseGraphResult optimizePoseGraph(const PoseMap &poses,
 }
 
 }  // namespace optimizer
-}  // namespace stereo_vslam
+}  // namespace visual_slam

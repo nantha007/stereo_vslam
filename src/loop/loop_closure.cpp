@@ -1,4 +1,4 @@
-#include "stereo_vslam/loop/loop_closure.h"
+#include "visual_slam/loop/loop_closure.h"
 
 #include <algorithm>
 #include <unordered_set>
@@ -8,14 +8,14 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/features2d.hpp>
 
-#include "stereo_vslam/backend/optimizer.h"
-#include "stereo_vslam/core/conversion.h"
-#include "stereo_vslam/core/landmark.h"
-#include "stereo_vslam/core/scoped_log_timer.h"
-#include "stereo_vslam/frontend/light_glue.h"
+#include "visual_slam/backend/optimizer.h"
+#include "visual_slam/core/conversion.h"
+#include "visual_slam/core/landmark.h"
+#include "visual_slam/core/scoped_log_timer.h"
+#include "visual_slam/frontend/light_glue.h"
 
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 namespace {
 
@@ -398,4 +398,4 @@ bool LoopClosure::estimateLoopPose(const Frame::Ptr &query,
     return true;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

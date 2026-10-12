@@ -1,6 +1,6 @@
-#include "stereo_vslam/core/map.h"
+#include "visual_slam/core/map.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 void MapState::insertKeyframe(Frame::Ptr frame) {
     keyframes[frame->keyframe_id] = frame;
@@ -44,4 +44,4 @@ bool Map::publish(uint64_t base_revision, std::shared_ptr<MapState> next) {
     return true;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.2)
-project(stereo_vslam)
+project(visual_slam)
 
 set(CMAKE_BUILD_TYPE Release)
 
@@ -82,7 +82,7 @@ set(THIRD_PARTY_LIBS
         )
 
 ############### source and test ######################
-set(STEREO_VSLAM_SOURCES
+set(VISUAL_SLAM_SOURCES
         src/core/camera.cpp
         src/core/config.cpp
         src/core/frame.cpp
@@ -101,12 +101,12 @@ set(STEREO_VSLAM_SOURCES
         src/viz/viewer.cpp
         src/visual_slam.cpp)
 
-add_library(stereo_vslam_objects OBJECT ${STEREO_VSLAM_SOURCES})
-target_include_directories(stereo_vslam_objects PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(stereo_vslam_objects PUBLIC ${THIRD_PARTY_LIBS})
+add_library(visual_slam_objects OBJECT ${VISUAL_SLAM_SOURCES})
+target_include_directories(visual_slam_objects PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(visual_slam_objects PUBLIC ${THIRD_PARTY_LIBS})
 
 add_executable(vslam src/main.cpp)
 target_link_libraries(vslam PRIVATE
-        stereo_vslam_objects
+        visual_slam_objects
         -Wl,--no-as-needed ${G2O_SOLVER_CSPARSE_EXTENSION} -Wl,--as-needed)
 set_property(TARGET vslam APPEND PROPERTY BUILD_RPATH "${ONNXRUNTIME_LIB_DIR}")

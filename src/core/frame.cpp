@@ -1,8 +1,8 @@
-#include "stereo_vslam/core/frame.h"
-#include "stereo_vslam/core/feature.h"
-#include "stereo_vslam/core/landmark.h"
+#include "visual_slam/core/frame.h"
+#include "visual_slam/core/feature.h"
+#include "visual_slam/core/landmark.h"
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 Frame::Ptr Frame::create() {
     static Id factory_id = 0;
@@ -35,4 +35,4 @@ void Frame::releaseImagesAndFeatures() {
     features_right.clear();
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

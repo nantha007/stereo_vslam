@@ -1,6 +1,6 @@
-#include "stereo_vslam/frontend/superpoint.h"
+#include "visual_slam/frontend/superpoint.h"
 
-#include "stereo_vslam/frontend/ort_session.h"
+#include "visual_slam/frontend/ort_session.h"
 
 #include <opencv2/imgproc.hpp>
 
@@ -8,7 +8,7 @@
 #include <array>
 #include <stdexcept>
 
-namespace stereo_vslam {
+namespace visual_slam {
 namespace {
 
 cv::Mat toUnitGray(const cv::Mat &image) {
@@ -84,4 +84,4 @@ Features SuperPoint::extract(const cv::Mat &image) const {
     return features;
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam

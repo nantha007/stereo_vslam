@@ -1,7 +1,7 @@
-#include "stereo_vslam/viz/viewer.h"
-#include "stereo_vslam/core/feature.h"
-#include "stereo_vslam/core/frame.h"
-#include "stereo_vslam/core/landmark.h"
+#include "visual_slam/viz/viewer.h"
+#include "visual_slam/core/feature.h"
+#include "visual_slam/core/frame.h"
+#include "visual_slam/core/landmark.h"
 
 #include <algorithm>
 #include <cassert>
@@ -12,7 +12,7 @@
 #include <opencv2/opencv.hpp>
 #include <pangolin/pangolin.h>
 
-namespace stereo_vslam {
+namespace visual_slam {
 
 namespace {
 
@@ -257,7 +257,7 @@ void Viewer::updateMap() {
 }
 
 void Viewer::runViewer(std::stop_token token) {
-    pangolin::CreateWindowAndBind("stereo_vslam", 1024, 768);
+    pangolin::CreateWindowAndBind("visual_slam", 1024, 768);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -391,4 +391,4 @@ void Viewer::drawFrame(const SE3 &T_cw, const float *color) {
     glPopMatrix();
 }
 
-}  // namespace stereo_vslam
+}  // namespace visual_slam
