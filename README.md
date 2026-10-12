@@ -83,7 +83,9 @@ Tracking and local BA run on the main thread; loop closure runs in the backgroun
 2. Local bundle adjustment refines a short window of recent keyframes after each new keyframe is added.
 3. Loop closure looks for a return to a known place and corrects the trajectory when it finds one.
 
+## Output Trajectory on KITTI sequence 05:
 
+![KITTI sequence 05 trajectory](images/kitti_sequence_05_output.png)
 
 ## TODO
 
